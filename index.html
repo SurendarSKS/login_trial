@@ -1,179 +1,132 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Company Login Portal</title>
+  <title>Company Portal</title>
   <style>
     body {
       font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      color: #fff;
       text-align: center;
-      background: linear-gradient(to right, #8e9eab, #eef2f3);
-      padding: 30px;
-    }
-    h1 {
-      color: #333;
+      padding: 50px;
     }
     .container {
-      max-width: 600px;
+      background-color: rgba(255, 255, 255, 0.9);
+      color: #000;
+      border-radius: 15px;
+      max-width: 400px;
       margin: auto;
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      padding: 30px;
     }
-    select, input {
-      width: 90%;
+    input, button {
+      width: 100%;
       padding: 10px;
       margin: 10px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
     }
     button {
-      padding: 10px 20px;
-      margin: 10px;
-      background-color: #4CAF50;
+      background-color: #0072ff;
       color: white;
-      border: none;
-      border-radius: 6px;
       cursor: pointer;
     }
     button:hover {
-      background-color: #45a049;
+      background-color: #005fd1;
     }
-    #form-section {
-      display: none;
+    h2 {
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
-
   <div class="container">
-    <h1>Company Portal</h1>
-
-    <div id="main-menu">
+    <h2>Company Portal</h2>
+    <div id="landing">
       <button onclick="showCreateCompany()">Create Company</button>
-      <button onclick="showLoginOptions()">Company Login</button>
+      <button onclick="showLogin()">Company Login</button>
     </div>
 
-    <div id="create-company" style="display:none;">
-      <h2>Create Company</h2>
-      <form id="createCompanyForm">
-        <input type="text" name="company_name" placeholder="Company Name" required><br>
-        <input type="email" name="email" placeholder="Company Email" required><br>
-        <input type="password" name="password" placeholder="Create Password" required><br>
-        <button type="submit">Register</button>
-      </form>
+    <div id="createCompany" style="display:none;">
+      <h3>Create Company</h3>
+      <input type="text" id="companyName" placeholder="Company Name" required>
+      <input type="email" id="companyEmail" placeholder="Email" required>
+      <input type="password" id="companyPassword" placeholder="Password" required>
+      <button onclick="submitCompany()">Register</button>
+      <button onclick="back()">Back</button>
     </div>
 
-    <div id="login-options" style="display:none;">
-      <h2>Login</h2>
+    <div id="login" style="display:none;">
+      <h3>Login</h3>
+      <input type="email" id="loginEmail" placeholder="Email" required>
+      <input type="password" id="loginPassword" placeholder="Password" required>
       <select id="role">
-        <option value="">Select Role</option>
-        <option value="manager">Manager (MD)</option>
-        <option value="employee">Employee</option>
+        <option value="Manager">Manager (MD)</option>
+        <option value="Employee">Employee</option>
       </select>
-      <form id="loginForm">
-        <input type="email" name="email" placeholder="Email" required><br>
-        <input type="password" name="password" placeholder="Password" required><br>
-        <button type="submit">Login</button>
-      </form>
+      <button onclick="loginCompany()">Login</button>
+      <button onclick="back()">Back</button>
     </div>
-  </div>
-
-  <div class="container" id="form-section">
-    <h2 id="form-title">Production Data Entry Form</h2>
-    <form id="dataForm">
-      <input type="hidden" name="entry_number" value="AUTO">
-      <input type="hidden" name="company_name" id="companyNameField">
-      <table>
-        <tr>
-          <th>DATE</th>
-          <th>SHIFT NO.</th>
-          <th>MACHINE ID</th>
-          <th>OPERATOR ID</th>
-          <th>OPERATION ID</th>
-          <th>FROM</th>
-          <th>TO</th>
-          <th>QUANTITY</th>
-        </tr>
-        <tr>
-          <td><input type="date" name="date" required></td>
-          <td>
-            <select name="shift" required>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-            </select>
-          </td>
-          <td><input type="text" name="machine_id" required></td>
-          <td><input type="text" name="operator_id" required></td>
-          <td><input type="text" name="operation_id" required></td>
-          <td><input type="time" name="from_time" required></td>
-          <td><input type="time" name="to_time" required></td>
-          <td><input type="number" name="quantity" required></td>
-        </tr>
-      </table>
-      <button type="submit">Submit</button>
-    </form>
   </div>
 
   <script>
-    const registerURL = 'https://script.google.com/macros/s/AKfycbzVJ9POlg2gAWOHV0tGaEa7KLSyvzTroAC6BB2JKQiOWKc6vzCEdWMkDjVZfxM2mzJXTw/exec';
-    const dataEntryURL = 'https://script.google.com/macros/s/AKfycbzMZrnrg1xaOkIuy3IIT-_Hp2iNIEOx3gzsHlMLFO1cPx_0Rk88iv2nNnFTucd8Lu3naA/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzVJ9POlg2gAWOHV0tGaEa7KLSyvzTroAC6BB2JKQiOWKc6vzCEdWMkDjVZfxM2mzJXTw/exec';
 
     function showCreateCompany() {
-      document.getElementById('main-menu').style.display = 'none';
-      document.getElementById('create-company').style.display = 'block';
+      document.getElementById("landing").style.display = "none";
+      document.getElementById("createCompany").style.display = "block";
     }
 
-    function showLoginOptions() {
-      document.getElementById('main-menu').style.display = 'none';
-      document.getElementById('login-options').style.display = 'block';
+    function showLogin() {
+      document.getElementById("landing").style.display = "none";
+      document.getElementById("login").style.display = "block";
     }
 
-    document.getElementById('createCompanyForm').addEventListener('submit', e => {
-      e.preventDefault();
-      fetch(registerURL, {
+    function back() {
+      document.getElementById("createCompany").style.display = "none";
+      document.getElementById("login").style.display = "none";
+      document.getElementById("landing").style.display = "block";
+    }
+
+    function submitCompany() {
+      const data = new FormData();
+      data.append("action", "register");
+      data.append("companyName", document.getElementById("companyName").value);
+      data.append("email", document.getElementById("companyEmail").value);
+      data.append("password", document.getElementById("companyPassword").value);
+
+      fetch(scriptURL, {
         method: 'POST',
-        body: new FormData(e.target)
+        body: data
       })
-      .then(res => alert('Company registered! Awaiting approval.'))
-      .catch(err => alert('Error registering company.'));
-    });
+      .then(response => response.text())
+      .then(result => alert(result))
+      .catch(error => alert('Error: ' + error.message));
+    }
 
-    document.getElementById('loginForm').addEventListener('submit', e => {
-      e.preventDefault();
-      const role = document.getElementById('role').value;
-      const email = e.target.email.value;
-      const password = e.target.password.value;
+    function loginCompany() {
+      const data = new FormData();
+      data.append("action", "login");
+      data.append("email", document.getElementById("loginEmail").value);
+      data.append("password", document.getElementById("loginPassword").value);
+      data.append("role", document.getElementById("role").value);
 
-      fetch(registerURL + `?login=true&email=${email}&password=${password}&role=${role}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.status === 'success') {
-            document.getElementById('form-section').style.display = 'block';
-            document.querySelector('.container').style.display = 'none';
-            document.getElementById('companyNameField').value = data.company;
-          } else {
-            alert('Login failed: ' + data.message);
-          }
-        })
-        .catch(err => alert('Login error.'));
-    });
-
-    document.getElementById('dataForm').addEventListener('submit', e => {
-      e.preventDefault();
-      fetch(dataEntryURL, {
+      fetch(scriptURL, {
         method: 'POST',
-        body: new FormData(e.target)
+        body: data
       })
-      .then(() => {
-        alert('Form submitted successfully');
-        e.target.reset();
+      .then(response => response.text())
+      .then(result => {
+        if (result.includes("Success")) {
+          localStorage.setItem("email", document.getElementById("loginEmail").value);
+          localStorage.setItem("role", document.getElementById("role").value);
+          window.location.href = (document.getElementById("role").value === 'Manager') ? "manager.html" : "dataentry.html";
+        } else {
+          alert(result);
+        }
       })
-      .catch(err => alert('Error submitting form'));
-    });
+      .catch(error => alert('Login Error: ' + error.message));
+    }
   </script>
 </body>
 </html>
-
