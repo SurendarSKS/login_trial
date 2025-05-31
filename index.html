@@ -2,145 +2,178 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Company Portal</title>
+  <title>Company Login Portal</title>
   <style>
     body {
-      background: linear-gradient(to right, #8e2de2, #4a00e0);
-      font-family: 'Segoe UI', sans-serif;
-      color: white;
+      font-family: Arial, sans-serif;
       text-align: center;
-      padding: 20px;
+      background: linear-gradient(to right, #8e9eab, #eef2f3);
+      padding: 30px;
     }
-    .card {
-      background: rgba(255, 255, 255, 0.1);
+    h1 {
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background-color: #fff;
+      padding: 20px;
       border-radius: 12px;
-      padding: 20px;
-      margin: 20px auto;
-      width: 90%;
-      max-width: 400px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
-    input, select, button {
+    select, input {
       width: 90%;
       padding: 10px;
       margin: 10px 0;
-      border: none;
       border-radius: 6px;
-      font-size: 16px;
+      border: 1px solid #ccc;
     }
     button {
-      background-color: #00d2ff;
-      color: black;
+      padding: 10px 20px;
+      margin: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
-      transition: 0.3s;
     }
     button:hover {
-      background-color: #00b8e6;
+      background-color: #45a049;
+    }
+    #form-section {
+      display: none;
     }
   </style>
 </head>
 <body>
 
-  <h1>🌟 Welcome to Company Portal</h1>
+  <div class="container">
+    <h1>Company Portal</h1>
 
-  <div class="card" id="mainMenu">
-    <button onclick="showRegister()">Create a Company</button>
-    <button onclick="showLogin()">Company Login</button>
+    <div id="main-menu">
+      <button onclick="showCreateCompany()">Create Company</button>
+      <button onclick="showLoginOptions()">Company Login</button>
+    </div>
+
+    <div id="create-company" style="display:none;">
+      <h2>Create Company</h2>
+      <form id="createCompanyForm">
+        <input type="text" name="company_name" placeholder="Company Name" required><br>
+        <input type="email" name="email" placeholder="Company Email" required><br>
+        <input type="password" name="password" placeholder="Create Password" required><br>
+        <button type="submit">Register</button>
+      </form>
+    </div>
+
+    <div id="login-options" style="display:none;">
+      <h2>Login</h2>
+      <select id="role">
+        <option value="">Select Role</option>
+        <option value="manager">Manager (MD)</option>
+        <option value="employee">Employee</option>
+      </select>
+      <form id="loginForm">
+        <input type="email" name="email" placeholder="Email" required><br>
+        <input type="password" name="password" placeholder="Password" required><br>
+        <button type="submit">Login</button>
+      </form>
+    </div>
   </div>
 
-  <div class="card" id="registerForm" style="display:none;">
-    <h2>Create Company</h2>
-    <input type="email" id="regEmail" placeholder="Company Email" required />
-    <input type="password" id="regPassword" placeholder="Password" required />
-    <select id="regRole">
-      <option value="MD">Manager (MD)</option>
-      <option value="Employee">Employee</option>
-    </select>
-    <button onclick="register()">Register</button>
-    <button onclick="goBack()">Back</button>
-  </div>
-
-  <div class="card" id="loginForm" style="display:none;">
-    <h2>Company Login</h2>
-    <input type="email" id="loginEmail" placeholder="Email" required />
-    <input type="password" id="loginPassword" placeholder="Password" required />
-    <button onclick="login()">Login</button>
-    <button onclick="goBack()">Back</button>
-  </div>
-
-  <div class="card" id="responseCard" style="display:none;">
-    <h2 id="responseText">Loading...</h2>
-    <button onclick="goBack()">Go Back</button>
+  <div class="container" id="form-section">
+    <h2 id="form-title">Production Data Entry Form</h2>
+    <form id="dataForm">
+      <input type="hidden" name="entry_number" value="AUTO">
+      <input type="hidden" name="company_name" id="companyNameField">
+      <table>
+        <tr>
+          <th>DATE</th>
+          <th>SHIFT NO.</th>
+          <th>MACHINE ID</th>
+          <th>OPERATOR ID</th>
+          <th>OPERATION ID</th>
+          <th>FROM</th>
+          <th>TO</th>
+          <th>QUANTITY</th>
+        </tr>
+        <tr>
+          <td><input type="date" name="date" required></td>
+          <td>
+            <select name="shift" required>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </td>
+          <td><input type="text" name="machine_id" required></td>
+          <td><input type="text" name="operator_id" required></td>
+          <td><input type="text" name="operation_id" required></td>
+          <td><input type="time" name="from_time" required></td>
+          <td><input type="time" name="to_time" required></td>
+          <td><input type="number" name="quantity" required></td>
+        </tr>
+      </table>
+      <button type="submit">Submit</button>
+    </form>
   </div>
 
   <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzVJ9POlg2gAWOHV0tGaEa7KLSyvzTroAC6BB2JKQiOWKc6vzCEdWMkDjVZfxM2mzJXTw/exec';
+    const registerURL = 'https://script.google.com/macros/s/AKfycbzVJ9POlg2gAWOHV0tGaEa7KLSyvzTroAC6BB2JKQiOWKc6vzCEdWMkDjVZfxM2mzJXTw/exec';
+    const dataEntryURL = 'https://script.google.com/macros/s/AKfycbzMZrnrg1xaOkIuy3IIT-_Hp2iNIEOx3gzsHlMLFO1cPx_0Rk88iv2nNnFTucd8Lu3naA/exec';
 
-    function showRegister() {
-      document.getElementById('mainMenu').style.display = 'none';
-      document.getElementById('registerForm').style.display = 'block';
+    function showCreateCompany() {
+      document.getElementById('main-menu').style.display = 'none';
+      document.getElementById('create-company').style.display = 'block';
     }
 
-    function showLogin() {
-      document.getElementById('mainMenu').style.display = 'none';
-      document.getElementById('loginForm').style.display = 'block';
+    function showLoginOptions() {
+      document.getElementById('main-menu').style.display = 'none';
+      document.getElementById('login-options').style.display = 'block';
     }
 
-    function goBack() {
-      document.getElementById('registerForm').style.display = 'none';
-      document.getElementById('loginForm').style.display = 'none';
-      document.getElementById('responseCard').style.display = 'none';
-      document.getElementById('mainMenu').style.display = 'block';
-    }
-
-    function register() {
-      const email = document.getElementById("regEmail").value;
-      const password = document.getElementById("regPassword").value;
-      const role = document.getElementById("regRole").value;
-
-      fetch(scriptURL, {
+    document.getElementById('createCompanyForm').addEventListener('submit', e => {
+      e.preventDefault();
+      fetch(registerURL, {
         method: 'POST',
-        body: new URLSearchParams({
-          action: 'register',
-          email, password, role
-        })
+        body: new FormData(e.target)
       })
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("registerForm").style.display = 'none';
-        document.getElementById("responseCard").style.display = 'block';
-        document.getElementById("responseText").innerText =
-          `Registered! Waiting for approval.\nYour company code is ${data.code}`;
-      });
-    }
+      .then(res => alert('Company registered! Awaiting approval.'))
+      .catch(err => alert('Error registering company.'));
+    });
 
-    function login() {
-      const email = document.getElementById("loginEmail").value;
-      const password = document.getElementById("loginPassword").value;
+    document.getElementById('loginForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const role = document.getElementById('role').value;
+      const email = e.target.email.value;
+      const password = e.target.password.value;
 
-      fetch(scriptURL, {
+      fetch(registerURL + `?login=true&email=${email}&password=${password}&role=${role}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'success') {
+            document.getElementById('form-section').style.display = 'block';
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('companyNameField').value = data.company;
+          } else {
+            alert('Login failed: ' + data.message);
+          }
+        })
+        .catch(err => alert('Login error.'));
+    });
+
+    document.getElementById('dataForm').addEventListener('submit', e => {
+      e.preventDefault();
+      fetch(dataEntryURL, {
         method: 'POST',
-        body: new URLSearchParams({
-          action: 'login',
-          email, password
-        })
+        body: new FormData(e.target)
       })
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("loginForm").style.display = 'none';
-        document.getElementById("responseCard").style.display = 'block';
-        if (data.status === 'success') {
-          document.getElementById("responseText").innerText =
-            `Login successful as ${data.role}\nCompany Code: ${data.code}`;
-        } else if (data.status === 'not_approved') {
-          document.getElementById("responseText").innerText =
-            "Your company is not yet approved. Please wait.";
-        } else {
-          document.getElementById("responseText").innerText =
-            "Login failed. Invalid credentials.";
-        }
-      });
-    }
+      .then(() => {
+        alert('Form submitted successfully');
+        e.target.reset();
+      })
+      .catch(err => alert('Error submitting form'));
+    });
   </script>
 </body>
 </html>
+
