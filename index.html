@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Company Portal</title>
+  <style>
+    body {
+      background: linear-gradient(to right, #8e2de2, #4a00e0);
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px auto;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+    input, select, button {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #00d2ff;
+      color: black;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #00b8e6;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🌟 Welcome to Company Portal</h1>
+
+  <div class="card" id="mainMenu">
+    <button onclick="showRegister()">Create a Company</button>
+    <button onclick="showLogin()">Company Login</button>
+  </div>
+
+  <div class="card" id="registerForm" style="display:none;">
+    <h2>Create Company</h2>
+    <input type="email" id="regEmail" placeholder="Company Email" required />
+    <input type="password" id="regPassword" placeholder="Password" required />
+    <select id="regRole">
+      <option value="MD">Manager (MD)</option>
+      <option value="Employee">Employee</option>
+    </select>
+    <button onclick="register()">Register</button>
+    <button onclick="goBack()">Back</button>
+  </div>
+
+  <div class="card" id="loginForm" style="display:none;">
+    <h2>Company Login</h2>
+    <input type="email" id="loginEmail" placeholder="Email" required />
+    <input type="password" id="loginPassword" placeholder="Password" required />
+    <button onclick="login()">Login</button>
+    <button onclick="goBack()">Back</button>
+  </div>
+
+  <div class="card" id="responseCard" style="display:none;">
+    <h2 id="responseText">Loading...</h2>
+    <button onclick="goBack()">Go Back</button>
+  </div>
+
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzVJ9POlg2gAWOHV0tGaEa7KLSyvzTroAC6BB2JKQiOWKc6vzCEdWMkDjVZfxM2mzJXTw/exec';
+
+    function showRegister() {
+      document.getElementById('mainMenu').style.display = 'none';
+      document.getElementById('registerForm').style.display = 'block';
+    }
+
+    function showLogin() {
+      document.getElementById('mainMenu').style.display = 'none';
+      document.getElementById('loginForm').style.display = 'block';
+    }
+
+    function goBack() {
+      document.getElementById('registerForm').style.display = 'none';
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('responseCard').style.display = 'none';
+      document.getElementById('mainMenu').style.display = 'block';
+    }
+
+    function register() {
+      const email = document.getElementById("regEmail").value;
+      const password = document.getElementById("regPassword").value;
+      const role = document.getElementById("regRole").value;
+
+      fetch(scriptURL, {
+        method: 'POST',
+        body: new URLSearchParams({
+          action: 'register',
+          email, password, role
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("registerForm").style.display = 'none';
+        document.getElementById("responseCard").style.display = 'block';
+        document.getElementById("responseText").innerText =
+          `Registered! Waiting for approval.\nYour company code is ${data.code}`;
+      });
+    }
+
+    function login() {
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+
+      fetch(scriptURL, {
+        method: 'POST',
+        body: new URLSearchParams({
+          action: 'login',
+          email, password
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("loginForm").style.display = 'none';
+        document.getElementById("responseCard").style.display = 'block';
+        if (data.status === 'success') {
+          document.getElementById("responseText").innerText =
+            `Login successful as ${data.role}\nCompany Code: ${data.code}`;
+        } else if (data.status === 'not_approved') {
+          document.getElementById("responseText").innerText =
+            "Your company is not yet approved. Please wait.";
+        } else {
+          document.getElementById("responseText").innerText =
+            "Login failed. Invalid credentials.";
+        }
+      });
+    }
+  </script>
+</body>
+</html>
