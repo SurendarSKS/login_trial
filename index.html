@@ -1,133 +1,113 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Company Portal</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Company - Portal</title>
   <style>
     body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #00416A, #E4E5E6);
       font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #00c6ff, #0072ff);
-      color: #fff;
-      text-align: center;
-      padding: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
     }
+
     .container {
-      background-color: rgba(255, 255, 255, 0.9);
-      color: #000;
-      border-radius: 15px;
-      max-width: 400px;
-      margin: auto;
-      padding: 30px;
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      text-align: center;
+      width: 350px;
     }
-    input, button {
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    input {
       width: 100%;
       padding: 10px;
       margin: 10px 0;
       border-radius: 5px;
-      border: none;
-      font-size: 16px;
+      border: 1px solid #ccc;
     }
+
     button {
-      background-color: #0072ff;
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 5px;
+      background-color: #00416A;
       color: white;
+      font-size: 16px;
       cursor: pointer;
     }
+
     button:hover {
-      background-color: #005fd1;
+      background-color: #003052;
     }
-    h2 {
-      margin-bottom: 20px;
+
+    .back-btn {
+      background-color: #aaa;
+    }
+
+    .back-btn:hover {
+      background-color: #888;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Company Portal</h2>
-    <div id="landing">
-      <button onclick="showCreateCompany()">Create Company</button>
-      <button onclick="showLogin()">Company Login</button>
-    </div>
-
-    <div id="createCompany" style="display:none;">
-      <h3>Create Company</h3>
-      <input type="text" id="companyName" placeholder="Company Name" required>
-      <input type="email" id="companyEmail" placeholder="Email" required>
-      <input type="password" id="companyPassword" placeholder="Password" required>
-      <button onclick="submitCompany()">Register</button>
-      <button onclick="back()">Back</button>
-    </div>
-
-    <div id="login" style="display:none;">
-      <h3>Login</h3>
-      <input type="email" id="loginEmail" placeholder="Email" required>
-      <input type="password" id="loginPassword" placeholder="Password" required>
-      <select id="role">
-        <option value="Manager">Manager (MD)</option>
-        <option value="Employee">Employee</option>
-      </select>
-      <button onclick="loginCompany()">Login</button>
-      <button onclick="back()">Back</button>
-    </div>
+    <h2>Create Company</h2>
+    <input type="text" id="company_name" placeholder="Company Name" required />
+    <input type="email" id="email" placeholder="Company Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button onclick="registerCompany()">Register</button>
+    <button class="back-btn" onclick="window.location.href='index.html'">Back</button>
   </div>
 
   <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzVJ9POlg2gAWOHV0tGaEa7KLSyvzTroAC6BB2JKQiOWKc6vzCEdWMkDjVZfxM2mzJXTw/exec';
+    async function registerCompany() {
+      const company_name = document.getElementById("company_name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
 
-    function showCreateCompany() {
-      document.getElementById("landing").style.display = "none";
-      document.getElementById("createCompany").style.display = "block";
-    }
+      if (!company_name || !email || !password) {
+        alert("Please fill all fields.");
+        return;
+      }
 
-    function showLogin() {
-      document.getElementById("landing").style.display = "none";
-      document.getElementById("login").style.display = "block";
-    }
+      try {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbyesSCXhDKi0MSgfomG3__FGsiqLQBiRcinsQtVV6gDm6HvLPS8mt82rJmRaodM1l1Qpg/exec", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            company_name,
+            email,
+            password,
+          }),
+        });
 
-    function back() {
-      document.getElementById("createCompany").style.display = "none";
-      document.getElementById("login").style.display = "none";
-      document.getElementById("landing").style.display = "block";
-    }
-
-    function submitCompany() {
-      const data = new FormData();
-      data.append("action", "register");
-      data.append("companyName", document.getElementById("companyName").value);
-      data.append("email", document.getElementById("companyEmail").value);
-      data.append("password", document.getElementById("companyPassword").value);
-
-      fetch(scriptURL, {
-        method: 'POST',
-        body: data
-      })
-      .then(response => response.text())
-      .then(result => alert(result))
-      .catch(error => alert('Error: ' + error.message));
-    }
-
-    function loginCompany() {
-      const data = new FormData();
-      data.append("action", "login");
-      data.append("email", document.getElementById("loginEmail").value);
-      data.append("password", document.getElementById("loginPassword").value);
-      data.append("role", document.getElementById("role").value);
-
-      fetch(scriptURL, {
-        method: 'POST',
-        body: data
-      })
-      .then(response => response.text())
-      .then(result => {
-        if (result.includes("Success")) {
-          localStorage.setItem("email", document.getElementById("loginEmail").value);
-          localStorage.setItem("role", document.getElementById("role").value);
-          window.location.href = (document.getElementById("role").value === 'Manager') ? "manager.html" : "dataentry.html";
+        const text = await response.text();
+        if (text === "Success") {
+          alert("Registration successful. Awaiting approval.");
+          window.location.href = "index.html";
         } else {
-          alert(result);
+          alert("Error: " + text);
         }
-      })
-      .catch(error => alert('Login Error: ' + error.message));
+      } catch (error) {
+        console.error(error);
+        alert("Error: Failed to fetch. Check your internet or script permissions.");
+      }
     }
   </script>
 </body>
 </html>
-
